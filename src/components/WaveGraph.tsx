@@ -47,7 +47,7 @@ export default function WaveGraph({
 			plot(y, 0, 5, ctx, "t in s", "y");
 
 			text(
-				`y(t) = ${amp.toFixed(2)} * sin(2 * π * ${freq.toFixed(2)}Hz * t)`,
+				`y(t) = ${(amp / 20).toFixed(2)} * sin(2 * π * ${freq.toFixed(2)}Hz * t)`,
 				w - 5,
 				h - 10,
 				ctx,
@@ -85,7 +85,7 @@ export default function WaveGraph({
 			if (drawAmp) plotAmp(amp, ctx);
 			if (animate) {
 				text(
-					(performance.now() - start).toString() + "ms",
+					(performance.now() - start).toFixed(1).toString() + "ms",
 					w - 20,
 					20,
 					ctx,
