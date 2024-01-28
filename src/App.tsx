@@ -1,6 +1,9 @@
 import { useState } from "react";
 import Box from "./components/Box";
 import WaveGraph from "./components/WaveGraph";
+import FormulaGuide from "./components/FormulaGuide";
+import ToneGenerator from "./components/ToneGenerator";
+import OscillatorAnimation from "./components/OscillatorAnimation";
 
 export default function App() {
 	const [amp, setAmp] = useState(50);
@@ -8,10 +11,21 @@ export default function App() {
 	const [drawAmp, setDrawAmp] = useState(true);
 	const [showCircle, setShowCircle] = useState(true);
 	const [animate, setAnimate] = useState(false);
+	const [oscillator, setOscillator] = useState("Pendel");
+
+	// used for plotting the oscillation, graph and circle
+	const y = (t: number) =>
+		amp *
+		Math.sin(
+			2 *
+				Math.PI *
+				freq *
+				(-t + (animate ? performance.now() / 1000 : 0)),
+		);
 
 	return (
 		<>
-			<div className="m-5 flex flex-row">
+			<div className="m-4">
 				<Box>
 					<WaveGraph
 						amp={amp}
@@ -19,11 +33,15 @@ export default function App() {
 						drawAmp={drawAmp}
 						showCircle={showCircle}
 						animate={animate}
+						y={y}
 					/>
 				</Box>
+			</div>
+			<div className="m-4 flex flex-row">
+				<OscillatorAnimation oscillator={oscillator} y={y} />
 				<div className="mx-2"></div>
 				<Box>
-					<div className="divider my-1">PARAMETER</div>
+					<div className="divider my-1 w-60">PARAMETER</div>
 
 					<div className="label-text">Amplitude ŷ:</div>
 					<div className="flex flex-row">
@@ -35,7 +53,7 @@ export default function App() {
 							className="range mr-2"
 							onChange={(v) => setAmp(+v.target.value)}
 						/>
-						<div className="w-10 text-center">{amp / 20}</div>
+						<div className="w-14 text-center">{amp / 20}</div>
 					</div>
 
 					<div className="label-text">Frequenz f:</div>
@@ -48,7 +66,7 @@ export default function App() {
 							className="range mr-2"
 							onChange={(v) => setFreq(+v.target.value / 10)}
 						/>
-						<div className="w-10 text-center">
+						<div className="w-14 text-center">
 							{freq.toFixed(1)}Hz
 						</div>
 					</div>
@@ -62,7 +80,7 @@ export default function App() {
 							className="range mr-2"
 							onChange={(v) => setFreq(+v.target.value / 10)}
 						/>
-						<div className="w-10 text-center">
+						<div className="w-14 text-center">
 							{(freq * 2).toFixed(1)}&#960;<sup>1</sup>&frasl;
 							<sub>s</sub>
 						</div>
@@ -79,14 +97,13 @@ export default function App() {
 								setFreq((1 / +v.target.value) * 10)
 							}
 						/>
-						<div className="w-10 text-center">
+						<div className="w-14 text-center">
 							{(1 / freq).toFixed(1)}s
 						</div>
 					</div>
 				</Box>
 				<div className="mx-2"></div>
-			</div>
-			<div className="m-5 flex flex-row">
+
 				<Box>
 					<div className="divider my-1">VISUELL</div>
 					<div className="form-control">
@@ -111,7 +128,7 @@ export default function App() {
 							<span className="label-text">Amplitude ŷ</span>
 						</label>
 					</div>
-					<div className="form-control">
+					<div className="form-control mb-1">
 						<label className="label cursor-pointer">
 							<input
 								type="checkbox"
@@ -122,63 +139,24 @@ export default function App() {
 							<span className="label-text">Kreisprojektion</span>
 						</label>
 					</div>
+					<select
+						className="select select-bordered w-full max-w-xs"
+						value={oscillator}
+						onChange={(e) => setOscillator(e.target.value)}
+					>
+						<option>Pendel</option>
+						<option>Federpendel 1</option>
+						<option>Federpendel 2</option>
+						<option>Unruh</option>
+						<option>Saite</option>
+					</select>
 				</Box>
+			</div>
+			<div className="m-4 flex flex-row">
+				<FormulaGuide />
 				<div className="mx-2"></div>
-				<Box>
-					<div className="divider my-1">FORMELN</div>
-					<div className="text-lg text-center mb-1">
-						y(t) &#61;{" "}
-						<span
-							className="tooltip tooltip-bottom border border-base-300 rounded-md p-1"
-							data-tip="Amplitude ŷ"
-						>
-							ŷ
-						</span>{" "}
-						&#215; sin(2 &#215; &#960; &#215;{" "}
-						<span
-							className="tooltip tooltip-bottom border border-base-300 rounded-md p-1"
-							data-tip="Frequenz f"
-						>
-							f
-						</span>{" "}
-						&#215; t)
-					</div>
-					<div className="text-lg text-center mb-1">
-						y(t) &#61;{" "}
-						<span
-							className="tooltip tooltip-bottom border border-base-300 rounded-md p-1"
-							data-tip="Amplitude ŷ"
-						>
-							ŷ
-						</span>{" "}
-						&#215; sin((2 &#215; &#960; &frasl;{" "}
-						<span
-							className="tooltip tooltip-bottom border border-base-300 rounded-md p-1"
-							data-tip="Periodendauer T"
-						>
-							T
-						</span>
-						) &#215; t)
-					</div>
-					<div className="text-lg text-center">
-						y(t) &#61;{" "}
-						<span
-							className="tooltip tooltip-bottom border border-base-300 rounded-md p-1"
-							data-tip="Amplitude ŷ"
-						>
-							ŷ
-						</span>{" "}
-						&#215; sin(
-						<span
-							className="tooltip tooltip-bottom border border-base-300 rounded-md p-1"
-							data-tip="Winkelgeschw. &#969;"
-						>
-							&#969;
-						</span>{" "}
-						&#215; t)
-					</div>
-				</Box>
+				<ToneGenerator />
 			</div>
 		</>
 	);
-}
+} // unruh, pendel, federpendel, saite
