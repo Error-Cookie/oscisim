@@ -1,31 +1,23 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { plot, plotAmp } from "../util/plot";
 import { text } from "../util/text";
+import { OsciCtx } from "../App";
+import { osciFuncX, osciFuncY } from "../util/oscifunc";
+import Box from "./Box";
 
-export default function WaveGraph({
-	amp,
-	freq,
-	drawAmp,
-	showCircle,
-	animate,
-	y,
-}: {
-	amp: number;
-	freq: number;
-	drawAmp: boolean;
-	showCircle: boolean;
-	animate: boolean;
-	y: (t: number) => number;
-}) {
+export default function WaveGraph() {
+	const osciCtx = useContext(OsciCtx);
+	const [animate] = osciCtx.animate;
+	const [amp] = osciCtx.amp;
+	const [freq] = osciCtx.freq;
+	const [showCircle] = osciCtx.showCircle;
+	const [drawAmp] = osciCtx.drawAmp;
+
 	const plotCanvasRef = useRef<HTMLCanvasElement>(null);
 	const circleCanvasRef = useRef<HTMLCanvasElement>(null);
 
-	// required for plotting the circle
-	const x = (t: number) =>
-		-amp *
-		Math.cos(
-			2 * Math.PI * freq * (t + (animate ? performance.now() / 1000 : 0)),
-		);
+	const y = osciFuncY(amp, freq, animate);
+	const x = osciFuncX(amp, freq, animate);
 
 	useEffect(() => {
 		let animFrame: number | undefined;
@@ -88,14 +80,7 @@ export default function WaveGraph({
 
 			if (animate) {
 				// debug frame time
-				text(
-					(performance.now() - start).toFixed(1).toString() + "ms",
-					w - 20,
-					20,
-					ctx,
-					11,
-					"right",
-				);
+				text((performance.now() - start).toFixed(1).toString() + "ms", w - 20, 20, ctx, 11, "right");
 				animFrame = window.requestAnimationFrame(draw); // create animation loop
 			}
 		};
@@ -106,11 +91,11 @@ export default function WaveGraph({
 	}, [amp, freq, drawAmp, showCircle, animate]);
 
 	return (
-		<div className="flex flex-row">
-			{showCircle && (
-				<canvas ref={circleCanvasRef} width={200} height={200}></canvas>
-			)}
-			<canvas ref={plotCanvasRef} width={800} height={200}></canvas>
-		</div>
+		<Box>
+			<div className="flex flex-row">
+				{showCircle && <canvas ref={circleCanvasRef} width={200} height={200}></canvas>}
+				<canvas ref={plotCanvasRef} width={800} height={200}></canvas>
+			</div>
+		</Box>
 	);
 }
