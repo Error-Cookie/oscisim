@@ -33,6 +33,14 @@ export default function Pendulum() {
 		ctx.moveTo(currX + 20, currY);
 		ctx.arc(currX, currY, 20, 0, 360);
 		ctx.stroke();
+
+		// elongation
+		ctx.beginPath();
+		ctx.save();
+		ctx.strokeStyle = "#888";
+		ctx.arc(w / 2, 0, w / 2, Math.PI / 2, Math.PI / 2 - y(0) / 100, y(0) > 0);
+		ctx.stroke();
+		ctx.restore();
 	};
 
 	return <Animation draw={draw} />;
