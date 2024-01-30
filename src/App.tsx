@@ -5,6 +5,7 @@ import ToneGenerator from "./components/ToneGenerator";
 import OscillatorAnimation from "./components/OscillatorAnimation";
 import Parameters from "./components/Parameters";
 import Visuals from "./components/Visuals";
+import Info from "./components/Info";
 
 type State<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 type OsciCtxData = {
@@ -48,6 +49,7 @@ export default function App() {
 			<div className="m-4 flex flex-row">
 				<FormulaGuide />
 				<ToneGenerator />
+				<Info />
 			</div>
 		</OsciCtx.Provider>
 	);
