@@ -13,22 +13,37 @@ export default function SpringPendulum1() {
 
 	const draw = (ctx: CanvasRenderingContext2D) => {
 		const w = ctx.canvas.width;
-        const h = ctx.canvas.height;
 
-		const currY = (h / 2) * Math.cos(y(0) / 100);
+		// spring top
+		ctx.beginPath();
+		ctx.moveTo(w / 2, 0);
+		ctx.lineTo(w / 2, 10);
+		ctx.lineTo(w / 2 - 15, 10);
 
-        // spring top
-        ctx.beginPath();
-        ctx.moveTo(w / 2, 0);
-        ctx.lineTo(w / 2, 20);
-        ctx.stroke();
+		// spring
+		const springX = (i: number) => w / 2 + ((i % 2) * 30 - 15);
+		const springY = (i: number) => (i / 15) * y(0) + (i / 15) * 100 + 10;
 
-        // spring
-		for (let i = 0; i < 10; i++) {
-            ctx.beginPath();
-            ctx.lineTo(w / 2 + (i % 2 == 0 ? 20 : -20), (20 + h / 2 + currY) / 10 * i);
-            ctx.stroke();
-        }
+		for (let i = 0; i < 15; i++) ctx.lineTo(springX(i), springY(i));
+
+		const ymax = springY(15);
+
+		// spring end + weight
+		ctx.lineTo(w / 2, ymax);
+		ctx.moveTo(w / 2 + 20, ymax + 15);
+		ctx.arc(w / 2, ymax + 15, 20, 0, 360);
+		ctx.stroke();
+
+		// elongation
+		ctx.beginPath();
+		ctx.save();
+		ctx.strokeStyle = "#888";
+		ctx.moveTo(w / 2 + 53, 110);
+		ctx.lineTo(w / 2 + 50, 110);
+		ctx.lineTo(w / 2 + 50, ymax);
+		ctx.lineTo(w / 2 + 53, ymax);
+		ctx.stroke();
+		ctx.restore();
 	};
 
 	return <Animation draw={draw} />;
